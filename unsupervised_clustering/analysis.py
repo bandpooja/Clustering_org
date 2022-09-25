@@ -5,7 +5,7 @@ import pandas as pd
 from wordcloud import WordCloud
 
 from preprocess_constants import conversions, stopwords
-from preprocess import remove_abbreviation
+from preprocess import remove_abbreviation, remove_weird_chars
 
 def word_cloud_cleaning(df_path: str, result_loc: str):
     #region read data
@@ -54,6 +54,8 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
 
         for w in stopwords:
             org = org.replace(w, '')
+        
+        org
         corrected_organization_names.append(org)
 
     df['clean_organization_name'] = corrected_organization_names
