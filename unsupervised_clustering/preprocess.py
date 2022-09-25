@@ -9,7 +9,9 @@ conversions = {
     'ltd': 'limited',
     'co.': 'co',
     'pharma': 'pharmaceuticals',
-    'tech': 'technologies'
+    'tech': 'technologies',
+    'no': 'number',
+    'corp': 'corporation'
 }
 
 stopwords = [
@@ -19,6 +21,7 @@ stopwords = [
     ' corp ',
     ' inc ',
     ' limited ',
+    'lp'
     ' w ',
     ' b ',
     ' c ',
