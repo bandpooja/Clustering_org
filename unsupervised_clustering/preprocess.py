@@ -15,4 +15,9 @@ def remove_abbreviation(org_name: str):
                 org_name = org_name.replace(r, x[0]+ ' ')
             else:
                 org_name = org_name.replace(r, x[0])
+    org_name= re.sub(r"[^a-zA-Z0-9 ]", "", org_name)
     return org_name
+
+def remove_french_accent(org_name: str):
+    org_name_ = re.sub(r"[^a-zA-Z0-9 ]", "", org_name)
+    return org_name_
