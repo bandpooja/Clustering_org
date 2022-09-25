@@ -3,8 +3,8 @@
 conversions = {
     '&': 'and',
     ' assn ': ' association ',
-    ' inc. ': ' incorporated ',
-    ' inc ': ' incorporated ',
+    ' inc. ': ' incorporation ',
+    ' inc ': ' incorporation ',
     ' ltd. ': ' limited ',
     ' ltd ': ' limited ',
     ' pharma ': ' pharmaceuticals',
