@@ -46,6 +46,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
     corrected_organization_names = []
     for org in organization_names:
         org = org.lower() + " "
+        org = remove_abbreviation(org)
         for w in conversions.keys():
             org = org.replace(w, conversions[w])
          
@@ -59,6 +60,6 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
 
 
 if __name__ == "__main__":
-    train_csv = r"C:\\Users\\bandp\\Downloads\\data\\input\\train_data.csv"
-    result_loc = r"C:\\Users\\bandp\\Documents\\cluster_results"
+    train_csv = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\\Documents\\cluster_results\\data\\input\\train_data.csv"
+    result_loc = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\\Documents\\cluster_results"
     word_cloud_cleaning(train_csv, result_loc)

@@ -21,3 +21,7 @@ def remove_abbreviation(org_name: str):
 def remove_weird_characters(org_name: str):
     org_name = re.sub(r"[^a-zA-Z0-9\s-]", "", org_name)
     return org_name
+
+if __name__ == "__main__":
+    s = 'F. J. Davey Home'
+    print(remove_abbreviation(s))
