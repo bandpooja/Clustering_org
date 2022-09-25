@@ -9,13 +9,18 @@ def remove_abbreviation(org_name: str):
     result = re.findall(pattern, org_name)
     if result:
         for r in result:
-            pattern_w = r'(?:[a-z])'
+            pattern_w = r'(?:[a-z&])'
             x = re.findall(pattern_w, r)
             if r[-1] == ' ':
                 org_name = org_name.replace(r, x[0]+ ' ')
             else:
                 org_name = org_name.replace(r, x[0])
-    org_name= re.sub(r"[^a-zA-Z0-9 ]", "", org_name)
+    
+    pattern = r'(?:\s[&])+'
+    result = re.findall(pattern, org_name)
+    if result:
+        for r in result:
+            org_name = org_name.replace(r, '&')
     return org_name
 
 def remove_weird_characters(org_name: str):
@@ -23,5 +28,5 @@ def remove_weird_characters(org_name: str):
     return org_name
 
 if __name__ == "__main__":
-    s = 'F. J. Davey Home'
+    s = 'F & J Davey Home'
     print(remove_abbreviation(s))
