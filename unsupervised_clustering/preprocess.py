@@ -19,5 +19,5 @@ def remove_abbreviation(org_name: str):
     return org_name
 
 def remove_weird_characters(org_name: str):
-    org_name = re.sub(r"[^a-zA-Z0-9 ()-']", "", org_name)
+    org_name = re.sub(r"[^a-zA-Z0-9\s-]", "", org_name)
     return org_name

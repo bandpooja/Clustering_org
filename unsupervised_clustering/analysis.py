@@ -4,7 +4,7 @@ import os.path as osp
 import pandas as pd
 from wordcloud import WordCloud
 
-from preprocess_constants import conversions, stopwords
+from preprocess_constants import conversions
 from preprocess import remove_abbreviation, remove_weird_characters
 
 def word_cloud_cleaning(df_path: str, result_loc: str):
@@ -25,7 +25,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
 
     #region cleaning
     '''
-        looking at the wordcloud it can be seen that there are a lot of stopwords
+        looking at the wordcloud it can be seen that there are a lot of words with similar meaning in different forms
          which occur more regularly in the cloud.
 
         Combining them in a file and then removing them in preprocessing step
@@ -34,9 +34,6 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
     organizations = remove_abbreviation(org_name=organizations)
     for w in conversions.keys():
         organizations = organizations.replace(w, conversions[w])
-
-    for w in stopwords:
-        organizations = organizations.replace(w, '')
     
     word_cloud = WordCloud(collocations = False, background_color = 'white').generate(organizations)
 
@@ -51,9 +48,6 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
         org = org.lower() + " "
         for w in conversions.keys():
             org = org.replace(w, conversions[w])
-
-        for w in stopwords:
-            org = org.replace(w + " ", " ")
         
         org = remove_weird_characters(org_name=org)
         corrected_organization_names.append(org)

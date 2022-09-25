@@ -15,8 +15,3 @@ conversions = {
     ' corp ': ' corporation '
 }
 
-stopwords = [
-    'incorporation'
-    'limited',
-    'corporation',
-]
