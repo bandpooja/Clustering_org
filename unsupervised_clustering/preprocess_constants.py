@@ -16,29 +16,7 @@ conversions = {
 }
 
 stopwords = [
-    ' oo ',
-    ' oa ',
-    ' co ',
-    ' corp ',
-    ' inc ',
-    ' limited ',
-    'lp'
-    ' w ',
-    ' b ',
-    ' c ',
-    ' v ',
-    ' . ',
-    ' .. ',
-    ' j ',
-    ' m ',
-    ' d ',
-    ' o ',
-    ' c ',
-    ' s ',
-    ' b ',
-    ' p ',
-    ' f ',
-    ' e ',
-    ' y ',
-    ' n '
+    'incorporation'
+    'limited',
+    'corporation',
 ]
