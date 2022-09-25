@@ -1,12 +1,11 @@
-import imp
 import matplotlib.pyplot as plt
 import os
 import os.path as osp
 import pandas as pd
 from wordcloud import WordCloud
 
-from preprocess import conversions, stopwords
-
+from preprocess_constants import conversions, stopwords
+from preprocess import remove_abbreviation
 
 def word_cloud_cleaning(df_path: str, result_loc: str):
     #region read data
@@ -32,6 +31,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
         Combining them in a file and then removing them in preprocessing step
         defining this list in the preprocess.py file
     '''
+    organizations = remove_abbreviation(org_name=organizations)
     for w in conversions.keys():
         organizations = organizations.replace(w, conversions[w])
 
@@ -63,6 +63,6 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
 
 
 if __name__ == "__main__":
-    train_csv = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\Documents\\Identify_Organization\\train_data.csv"
+    train_csv = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\Documents\\cluster_results\\data\\input\\train_data.csv"
     result_loc = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\Documents\\cluster_results"
     word_cloud_cleaning(train_csv, result_loc)
