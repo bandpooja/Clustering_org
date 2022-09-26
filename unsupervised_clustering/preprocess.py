@@ -1,13 +1,13 @@
 import re
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 
 from preprocess_constants import conversions, stop_words_ctx
 
 
-def perform_conversions(s: str):
+def perform_conversions(org_name: str):
     s_words = []
-    for w in s.split(' '):
+    ws = org_name.split(" ")
+    for w in ws:
         if w in conversions.keys():
             s_words.append(conversions[w])
         else:
@@ -84,22 +84,23 @@ def remove_stop_words(org_name: str):
     return (' '.join(str(x) for x in filtered_sentence)) 
 
 
-def clean_org_name(org: str):
-    org = remove_abbreviation(org)
-    org = perform_conversions(org)
-    org = remove_weird_characters(org_name=org)
-    org = remove_stop_words(org_name=org)
+def clean_org_name(org_name: str):
+    org_name = remove_abbreviation(org_name=org_name)
+    org_name = perform_conversions(org_name=org_name)
+    org_name = remove_weird_characters(org_name=org_name)
+    org_name = remove_stop_words(org_name=org_name)
+    return org_name
 
 
 if __name__ == "__main__":
-    # s = 'P A T H Davey Home'
-    # print(remove_weird_characters(remove_abbreviation(s)))
+    s = 'North Rock Group Ltd'
+    print(clean_org_name(s))
 
     # s = 'P.A.T.H Davey Home'
-    # print(remove_weird_characters(remove_abbreviation(s)))
+    # print(clean_org_name(s))
 
     # s =  'P. A. T. H. Davey Home'
-    # print(remove_weird_characters(remove_abbreviation(s)))
+    # print(clean_org_name(s))
 
-    s= 'corporation of the municipality of chatham-kent'
-    print(remove_stop_words(s))
+    # s= 'corporation of the municipality of chatham-kent'
+    # print(clean_org_name(s))

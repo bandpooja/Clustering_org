@@ -32,7 +32,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
         defining this list in the preprocess.py file
     '''
     organizations = remove_abbreviation(org_name=organizations)
-    organizations = perform_conversions(s=organizations)
+    organizations = perform_conversions(org_name=organizations)
     
     word_cloud = WordCloud(collocations = False, background_color = 'white').generate(organizations)
 
@@ -45,7 +45,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
     corrected_organization_names = []
     for org in organization_names:
         org = org.lower() + " "
-        corrected_organization_names.append(clean_org_name(org=org))
+        corrected_organization_names.append(clean_org_name(org_name=org))
 
     df['clean_organization_name'] = corrected_organization_names
     df.to_csv(osp.join(result_loc, 'clean_train_df.csv'))
