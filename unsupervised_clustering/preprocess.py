@@ -1,4 +1,20 @@
 import re
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+from preprocess_constants import conversions, stop_words_ctx
+
+
+def perform_conversions(s: str):
+    s_words = []
+    for w in s.split(' '):
+        if w in conversions.keys():
+            s_words.append(conversions[w])
+        else:
+            s_words.append(w)
+    s = " ".join(s_words)
+    return s
+
 
 def remove_abbreviation(org_name: str):
     org_name = org_name.lower()
@@ -45,16 +61,45 @@ def remove_abbreviation(org_name: str):
     #         org_name = org_name.replace(r, '&')
     return org_name
 
+
 def remove_weird_characters(org_name: str):
     org_name = re.sub(r"[^a-zA-Z0-9\s-]", "", org_name)
     return org_name
 
+
+def remove_stop_words(org_name: str):
+    stop_words = set(stopwords.words('english'))
+
+    org_name_split = org_name.split(" ")
+    filtered_sentence = []
+
+    for w in org_name_split:    
+        if w not in stop_words or w not in stop_words_ctx:
+            if '-' in w:
+                s = w.replace('-','')
+                filtered_sentence.append(s)
+            else:
+                filtered_sentence.append(w)
+
+    return (' '.join(str(x) for x in filtered_sentence)) 
+
+
+def clean_org_name(org: str):
+    org = remove_abbreviation(org)
+    org = perform_conversions(org)
+    org = remove_weird_characters(org_name=org)
+    org = remove_stop_words(org_name=org)
+
+
 if __name__ == "__main__":
-    s = 'P A T H Davey Home'
-    print(remove_weird_characters(remove_abbreviation(s)))
+    # s = 'P A T H Davey Home'
+    # print(remove_weird_characters(remove_abbreviation(s)))
 
-    s = 'P.A.T.H Check check'
-    print(remove_weird_characters(remove_abbreviation(s)))
+    # s = 'P.A.T.H Davey Home'
+    # print(remove_weird_characters(remove_abbreviation(s)))
 
-    s =  'P. A. T. H. Check check'
-    print(remove_weird_characters(remove_abbreviation(s)))
+    # s =  'P. A. T. H. Davey Home'
+    # print(remove_weird_characters(remove_abbreviation(s)))
+
+    s= 'corporation of the municipality of chatham-kent'
+    print(remove_stop_words(s))

@@ -5,7 +5,8 @@ import pandas as pd
 from wordcloud import WordCloud
 
 from preprocess_constants import conversions
-from preprocess import remove_abbreviation, remove_weird_characters
+from preprocess import clean_org_name, perform_conversions, remove_abbreviation, remove_weird_characters, remove_stop_words
+
 
 def word_cloud_cleaning(df_path: str, result_loc: str):
     #region read data
@@ -32,8 +33,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
         defining this list in the preprocess.py file
     '''
     organizations = remove_abbreviation(org_name=organizations)
-    for w in conversions.keys():
-        organizations = organizations.replace(w, conversions[w])
+    organizations = perform_conversions(s=organizations)
     
     word_cloud = WordCloud(collocations = False, background_color = 'white').generate(organizations)
 
@@ -46,12 +46,7 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
     corrected_organization_names = []
     for org in organization_names:
         org = org.lower() + " "
-        org = remove_abbreviation(org)
-        for w in conversions.keys():
-            org = org.replace(w, conversions[w])
-         
-        org = remove_weird_characters(org_name=org)
-        corrected_organization_names.append(org)
+        corrected_organization_names.append(clean_org_name(org=org))
 
     df['clean_organization_name'] = corrected_organization_names
     df.to_csv(osp.join(result_loc, 'clean_train_df.csv'))

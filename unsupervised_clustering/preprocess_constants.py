@@ -5,11 +5,12 @@ conversions = {
     ' inc ': ' incorporation ',
     ' ltd. ': ' limited ',
     ' ltd ': ' limited ',
-    ' pharma ': ' pharmaceuticals',
-    ' tech ': ' technologies',
+    ' pharma ': ' pharmaceuticals ',
+    ' tech ': ' technologies ',
     ' no. ': ' number ',
     ' co. ': ' corporation ',
-    ' co ': ' corporatioin ',
+    ' co ': ' corporation ',
     ' corp ': ' corporation '
 }
 
+stop_words = set(['and', 'tech', 'number', 'corporation', 'limited', 'association', 'incorporation'])
