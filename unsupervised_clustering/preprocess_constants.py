@@ -13,4 +13,4 @@ conversions = {
     ' corp ': ' corporation '
 }
 
-stop_words = set(['and', 'tech', 'number', 'corporation', 'limited', 'association', 'incorporation'])
+stop_words_ctx = set(['and', 'tech', 'number', 'corporation', 'limited', 'association', 'incorporation'])
