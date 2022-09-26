@@ -74,12 +74,8 @@ def remove_stop_words(org_name: str):
     filtered_sentence = []
 
     for w in org_name_split:    
-        if w not in stop_words or w not in stop_words_ctx:
-            if '-' in w:
-                s = w.replace('-','')
-                filtered_sentence.append(s)
-            else:
-                filtered_sentence.append(w)
+        if w not in stop_words and w not in stop_words_ctx:
+            filtered_sentence.append(w.replace('-', '').replace("'", ""))
 
     return (' '.join(str(x) for x in filtered_sentence)) 
 
