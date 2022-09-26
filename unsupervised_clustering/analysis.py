@@ -1,3 +1,4 @@
+import json
 import matplotlib.pyplot as plt
 import os
 import os.path as osp
@@ -48,12 +49,30 @@ def word_cloud_cleaning(df_path: str, result_loc: str):
         corrected_organization_names.append(clean_org_name(org_name=org))
 
     df['clean_organization_name'] = corrected_organization_names
-    df.to_csv(osp.join(result_loc, 'clean_train_df.csv'))
+    df.to_csv(osp.join(result_loc, 'clean_train_df.csv'), index=False)
     #endregion
 
+
+def create_uq_word_dictionary(df_path: str,result_loc: str):
+    word_cloud_cleaning(df_path=df_path, result_loc=result_loc)
+    df = pd.read_csv(osp.join(result_loc, 'clean_train_df.csv'))
+
+    organization_names = ' '.join(df['clean_organization_name'].values.tolist())
+    words = organization_names.split(' ')
+    word_set = set()
+    for w in words:
+        word_set.add(w)
+    print(f"Number of distinct words in the dataframe are: {len(word_set)}")
+
+    word_d = {}
+    for idx, w in enumerate(word_set):
+        word_d[w] = idx
+    
+    with open(osp.join(result_loc, 'uq_words.json'), 'w') as fp:
+        json.dump(word_d, fp, indent=4)
 
 
 if __name__ == "__main__":
     train_csv = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\\Documents\\cluster_results\\data\\input\\train_data.csv"
     result_loc = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\\Documents\\cluster_results"
-    word_cloud_cleaning(train_csv, result_loc)
+    create_uq_word_dictionary(train_csv, result_loc)

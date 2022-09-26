@@ -77,7 +77,7 @@ def remove_stop_words(org_name: str):
         if w not in stop_words and w not in stop_words_ctx:
             filtered_sentence.append(w.replace('-', '').replace("'", ""))
 
-    return (' '.join(str(x) for x in filtered_sentence)) 
+    return (' '.join(str(x) for x in filtered_sentence if len(str(x)) > 0)) 
 
 
 def clean_org_name(org_name: str):
