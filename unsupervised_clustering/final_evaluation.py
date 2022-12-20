@@ -2,16 +2,14 @@ import argparse
 from collections import defaultdict
 from gettext import find
 import json
-from multiprocessing import Pool
 import numpy as np
 import os
 import os.path as osp
 import pandas as pd
 import requests
-from preprocess import clean_org_name
-from sklearn.svm import SVC # "Support vector classifier" 
-from sklearn.model_selection import train_test_split  
 from tqdm import tqdm
+
+from unsupervised_clustering.preprocess import clean_org_name
 
 
 def calculate_vectors(org_name):
@@ -85,12 +83,12 @@ def make_pickle_file():
     final_df['center']=avg
     final_df['radius']=radius
 
-    final_df.to_pickle('data_result.pkl')
+    final_df.to_pickle(osp.join(result_loc,'data_result.pkl'))
 
 def make_predictions(org_name):
     suggestions = {}
     pred_list = []
-    final_df = pd.read_pickle('data_result.pkl')
+    final_df = pd.read_pickle(osp.join(result_loc,'data_result.pkl'))
     point= calculate_vectors(org_name)
 
 
@@ -118,50 +116,63 @@ def make_predictions(org_name):
     return result
 
 def make_group_predictions(organizationID: str, result_file: str) -> None:
-    # region get names from the ID
-    url_path = f'http://on34c02847195.cihs.ad.gov.on.ca:8080/api/employee_group/{id}/names'
+    predictions ={}
+   # get names from the ID
+    url_path = f'http://on34c02847195:8080/api/employee_group/{organizationID}/names'
     response = requests.get(url_path)
     data = response.json()
-    print(data)
+    # with open(result_file, "w") as file:
+    #     file.write(str(data))
     names =[]
     for org_name in data:
         names.append(org_name['Organization_name'])
-    # endregion
+    for org in names:
+        for pred in make_predictions(org):
+            if pred not in predictions:
+                predictions[pred] = 1
+            else:
+                predictions[pred] += 1
+    
+    suggestions = {k: v for k, v in sorted(predictions.items(), key=lambda item: item[1],reverse=True)}
+    suggestion_d = {"Suggestion": " | ".join([k for k in suggestions.keys()])}
+    with open(result_file, 'w') as fp:
+        json.dump(suggestion_d, fp)
 
-    # region vectorize and make predictions
-    org_name_vec = []
-    for n in names:
-        org_name_vec.append(calculate_vectors(n))
-    group_pred= np.array(org_name_vec)
+    # # region vectorize and make predictions
+    # org_name_vec = []
+    # for n in names:
+    #     org_name_vec.append(calculate_vectors(n))
+    # group_pred= np.array(org_name_vec)
 
-    final_df = pd.read_pickle('data_result.pkl')
-    center= np.array(final_df['center'].values.tolist())
-    radius= np.array(final_df['radius'].values.tolist())
-    c_splits = np.array_split(center, 2)
-    r_split= np.array_split(radius, 2)
-    A_list= []
-    pred = []
-    for idx,mat in enumerate(c_splits):
-        A= (np.sum((group_pred[:,None] - mat)**2, axis=-1)**.5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-        r= A-r_split[idx]
-        result= np.argsort(r)
-        for res in list(result):
-            A_list=A_list+ list(res[:3])
+    # final_df = pd.read_pickle('data_result.pkl')
+    # center= np.array(final_df['center'].values.tolist())
+    # radius= np.array(final_df['radius'].values.tolist())
+    # c_splits = np.array_split(center, 2)
+    # r_split= np.array_split(radius, 2)
+    # A_list= []
+    # pred = []
+    # for idx,mat in enumerate(c_splits):
+    #     A= (np.sum((group_pred[:,None] - mat)**2, axis=-1)**.5)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    #     r= A-r_split[idx]
+    #     result= np.argsort(r)
+    #     for res in list(result):
+    #         A_list=A_list+ list(res[:3])
             
-    dic= {x:A_list.count(x) for x in A_list}
-    suggestions = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1],reverse=True)}       
-    suggestions_keys = list(suggestions.keys())
+    # dic= {x:A_list.count(x) for x in A_list}
+    # suggestions = {k: v for k, v in sorted(dic.items(), key=lambda item: item[1],reverse=True)}       
+    # suggestions_keys = list(suggestions.keys())
    
-    for i in suggestions_keys:
-        pred.append(df.loc[df.number == final_df._get_value(i, 'group'), 'organization_name'].values[0])
-    # endregion
+    # for i in suggestions_keys:
+    #     pred.append(df.loc[df.number == final_df._get_value(i, 'group'), 'organization_name'].values[0])
+    # # endregion
 
-    # region write results to a text file
-    with open(result_file, "w") as file:
-        for p in pred:
-            file.write(p)
-    # endregion
-    return
+    # # region write results to a text file
+    # with open(result_file, "w") as file:
+    #     file.write("hi")
+    #     for p in pred:
+    #         file.write(p)
+    # # endregion
+    return str(list(suggestions.keys()))
 
 
 def accuracy_measure():
@@ -185,29 +196,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     # global varibles
-    result_loc = r"C:\\Users\\BandalPo\\OneDrive - Government of Ontario\\Documents\\cluster_results"
-    df= pd.read_csv(osp.join(result_loc, 'final.csv'))
+    result_loc = r"C:\\Users\\BandalPo\\Projects\\cluster_results"
+    df = pd.read_csv(os.path.join(result_loc,"final.csv"))
 
-    # final_df = pd.read_pickle('data_result.pkl')
     make_group_predictions(args.organizationID, args.result_file)
-
-       
-   
-    
-
-
-
-
-
-
-
-
-
-    
-    
-    
-
-
-
-
-
