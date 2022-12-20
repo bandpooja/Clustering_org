@@ -1,17 +1,20 @@
-import re
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet as wn
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
+import re
 
-from preprocess_constants import conversions, stop_words_ctx
+from unsupervised_clustering.preprocess_constants import conversions, stop_words_ctx, ignore_words
 
 
 def perform_conversions(org_name: str):
     s_words = []
     ws = org_name.split(" ")
     for w in ws:
-        if w in conversions.keys():
-            s_words.append(conversions[w])
+        if w.lower() in conversions.keys():
+            s_words.append(conversions[w.lower()])
         else:
-            s_words.append(w)
+            s_words.append(w.lower())
     s = " ".join(s_words)
     return s
 
@@ -22,7 +25,7 @@ def remove_abbreviation(org_name: str):
     org_words = org_name.split(' ')
     org_words_w_aggregated_abb = []
     for w in org_words:
-        if len(w) == 1:
+        if len(w) == 1 or w == 'and':
             if len(org_words_w_aggregated_abb) == 0:
                 org_words_w_aggregated_abb.append(w)
             else:
@@ -68,28 +71,37 @@ def remove_weird_characters(org_name: str):
 
 
 def remove_stop_words(org_name: str):
-    stop_words = set(stopwords.words('english'))
-
+    #stop_words = set(stopwords.words('english'))
+    lemmatizer = WordNetLemmatizer()
+    #ps = PorterStemmer()
     org_name_split = org_name.split(" ")
     filtered_sentence = []
-
     for w in org_name_split:    
-        if w not in stop_words and w not in stop_words_ctx:
-            filtered_sentence.append(w.replace('-', '').replace("'", ""))
+        if w not in stop_words_ctx:
+            if w not in ignore_words:
+                filtered_sentence.append(lemmatizer.lemmatize(w.replace('-', ' ').replace("'", ""), pos='n'))
+            else:
+                filtered_sentence.append(w.replace('-', ' ').replace("'", ""))
+            
 
     return (' '.join(str(x) for x in filtered_sentence if len(str(x)) > 0)) 
 
 
 def clean_org_name(org_name: str):
-    org_name = remove_abbreviation(org_name=org_name)
     org_name = perform_conversions(org_name=org_name)
+    #print(org_name)
+    org_name = remove_abbreviation(org_name=org_name)
+    #print(org_name)
     org_name = remove_weird_characters(org_name=org_name)
+    #print(org_name)
     org_name = remove_stop_words(org_name=org_name)
+    
     return org_name
 
 
 if __name__ == "__main__":
-    s = 'North Rock Group Ltd'
+
+    s = "3-T Forming North Inc."
     print(clean_org_name(s))
 
     # s = 'P.A.T.H Davey Home'
